@@ -32,6 +32,7 @@ import ApiDocs from '@/components/apiDocs/ApiDocs'
 import ServiceMock from '@/components/test/ServiceMock'
 import ServiceMetrics from '@/components/metrics/ServiceMetrics'
 import ServiceRelation from '@/components/metrics/ServiceRelation'
+import ServiceRelationV2 from '@/components/metrics/ServiceRelationV2'
 import Management from '@/components/Management'
 import Index from '@/Index'
 import Login from '@/Login'
@@ -161,6 +162,14 @@ export default new Router({
           path: '/metrics/relation',
           name: 'ServiceRelation',
           component: ServiceRelation,
+          meta: {
+            requireLogin: true
+          }
+        },
+        {
+          path: '/metrics/relationV2',
+          name: 'ServiceRelationV2',
+          component: ServiceRelationV2,
           meta: {
             requireLogin: true
           }

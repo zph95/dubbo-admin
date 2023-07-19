@@ -89,6 +89,8 @@ public class RelationDTO {
         private String name;
         private int category;
 
+        private String release;
+
         public Node() {
         }
 
@@ -96,6 +98,12 @@ public class RelationDTO {
             this.index = index;
             this.name = name;
             this.category = category;
+        }
+
+        public Node( String name, int category, String release) {
+            this.name = name;
+            this.category = category;
+            this.release = release;
         }
 
         public Integer getIndex() {
@@ -135,6 +143,14 @@ public class RelationDTO {
         @Override
         public int hashCode() {
             return Objects.hash(index, name, category);
+        }
+
+        public String getRelease() {
+            return release;
+        }
+
+        public void setRelease(String release) {
+            this.release = release;
         }
     }
 

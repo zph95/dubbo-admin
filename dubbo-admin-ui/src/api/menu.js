@@ -46,7 +46,8 @@ const Menu = [
     icon: 'show_chart',
     items: [
       { title: 'serviceMetrics', path: '/metrics/index', badge: 'feature' },
-      { title: 'serviceRelation', path: '/metrics/relation', badge: 'new' }
+      { title: 'serviceRelation', path: '/metrics/relation', badge: 'new' },
+      { title: 'serviceRelationV2', path: '/metrics/relationV2', badge: 'custom' }
     ]
   },
   { title: 'configManage', path: '/management', icon: 'build' }

@@ -20,6 +20,7 @@ package org.apache.dubbo.admin.controller;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import javax.annotation.Resource;
 import org.apache.dubbo.admin.annotation.Authority;
 import org.apache.dubbo.admin.common.util.Constants;
 import org.apache.dubbo.admin.common.util.Tool;
@@ -34,6 +35,7 @@ import org.apache.dubbo.admin.service.impl.MetrcisCollectServiceImpl;
 import org.apache.dubbo.metadata.definition.model.FullServiceDefinition;
 import org.apache.dubbo.metadata.report.identifier.MetadataIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,13 +53,16 @@ public class MetricsCollectController {
 
     private ProviderService providerService;
     private ConsumerService consumerService;
-    private MetricsService metricsService;
+    private MetricsService metricsServiceV1;
+
+    private MetricsService metricsServiceV2;
 
     @Autowired
-    public MetricsCollectController(ProviderService providerService, ConsumerService consumerService, MetricsService metricsService) {
+    public MetricsCollectController(ProviderService providerService, ConsumerService consumerService,@Qualifier("relationV1") MetricsService metricsServiceV1,@Qualifier("relationV2") MetricsService metricsServiceV2) {
         this.providerService = providerService;
         this.consumerService = consumerService;
-        this.metricsService = metricsService;
+        this.metricsServiceV1 = metricsServiceV1;
+        this.metricsServiceV2 = metricsServiceV2;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -70,8 +75,14 @@ public class MetricsCollectController {
 
     @RequestMapping(value = "/relation", method = RequestMethod.GET)
     public RelationDTO getApplicationRelation(){
-        return metricsService.getApplicationRelation();
+        return metricsServiceV1.getApplicationRelation();
     }
+
+    @RequestMapping(value = "/relationV2", method = RequestMethod.GET)
+    public RelationDTO getApplicationRelationV2(){
+        return metricsServiceV2.getApplicationRelation();
+    }
+
 
     private String getOnePortMessage(String group, String ip, String port, String protocol) {
         MetrcisCollectServiceImpl metrcisCollectService = new MetrcisCollectServiceImpl();

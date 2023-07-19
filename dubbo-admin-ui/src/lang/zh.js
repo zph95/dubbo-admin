@@ -20,6 +20,7 @@ export default {
   serviceGovernance: '服务治理',
   serviceMetrics: '服务统计',
   serviceRelation: '服务关系',
+  serviceRelationV2: '服务关系V2',
   routingRule: '条件路由',
   tagRule: '标签路由',
   meshRule: 'Mesh路由',
