@@ -17,6 +17,7 @@
 
 package org.apache.dubbo.admin.registry.mapping;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.admin.common.util.Constants;
 import org.apache.dubbo.admin.registry.nacos.NacosData;
 import org.apache.dubbo.admin.registry.nacos.NacosOpenapiUtil;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.dubbo.admin.common.util.Constants.CATEGORY_KEY;
 
+@Slf4j
 public class AdminMappingListener implements MappingListener {
 
     private static final URL CONSUMER_URL = new URL(Constants.ADMIN_PROTOCOL, NetUtils.getLocalHost(), 0, "",
@@ -88,15 +90,21 @@ public class AdminMappingListener implements MappingListener {
                         serviceInstancesChangedListener = new AdminServiceInstancesChangedListener(Sets.newHashSet(serviceName), serviceDiscovery, addressChangeListener);
 //                        serviceInstancesChangedListener.setUrl(CONSUMER_URL);
                         List<ServiceInstance> allInstances = new ArrayList<>();
-                        List<ServiceInstance> serviceInstances = serviceDiscovery.getInstances(serviceName);
-                        if (serviceDiscovery instanceof NacosServiceDiscovery) {
-                            List<ServiceInstance> consumerInstances = convertToInstance(NacosOpenapiUtil.getSubscribeAddressesWithHttpEndpoint(serviceDiscovery.getUrl(), serviceName));
-                            allInstances.addAll(consumerInstances);
+                        try {
+                            List<ServiceInstance> serviceInstances = serviceDiscovery.getInstances(serviceName);
+                            if (serviceDiscovery instanceof NacosServiceDiscovery) {
+                                List<ServiceInstance> consumerInstances = convertToInstance(NacosOpenapiUtil.getSubscribeAddressesWithHttpEndpoint(serviceDiscovery.getUrl(), serviceName));
+                                allInstances.addAll(consumerInstances);
+                            }
+                            if (CollectionUtils.isNotEmpty(serviceInstances)) {
+                                allInstances.addAll(serviceInstances);
+                                serviceInstancesChangedListener.onEvent(new ServiceInstancesChangedEvent(serviceName, allInstances));
+                            }
                         }
-                        if (CollectionUtils.isNotEmpty(serviceInstances)) {
-                            allInstances.addAll(serviceInstances);
-                            serviceInstancesChangedListener.onEvent(new ServiceInstancesChangedEvent(serviceName, allInstances));
+                        catch ( Exception e){
+                            log.error("get instances error:{}", serviceName, e);
                         }
+
                         serviceListeners.put(serviceName, serviceInstancesChangedListener);
 //                        serviceInstancesChangedListener.setUrl(CONSUMER_URL);
                         serviceDiscovery.addServiceInstancesChangedListener(serviceInstancesChangedListener);
@@ -131,7 +139,6 @@ public class AdminMappingListener implements MappingListener {
             String serviceKey = removeProtocol(protocolServiceKey);
 
             ConcurrentMap<String, Map<String, List<InstanceAddressURL>>> appServiceMap = instanceRegistryCache.computeIfAbsent(Constants.PROVIDERS_CATEGORY, key -> new ConcurrentHashMap<>());
-
             Map<String, List<InstanceAddressURL>> serviceMap = appServiceMap.computeIfAbsent(serviceName, key -> new ConcurrentHashMap<>());
             Map<String, List<URL>> consumerServiceMap = instanceRegistryCache.getSubscribedCache().computeIfAbsent(serviceName, key -> new ConcurrentHashMap<>());
 

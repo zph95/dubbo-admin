@@ -17,6 +17,7 @@
 
 package org.apache.dubbo.admin.registry.mapping;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.ProtocolServiceKey;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.registry.client.ServiceDiscovery;
@@ -28,8 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class AdminServiceInstancesChangedListener extends ServiceInstancesChangedListener {
 
     private AddressChangeListener addressChangeListener;
@@ -52,7 +55,13 @@ public class AdminServiceInstancesChangedListener extends ServiceInstancesChange
                 .forEach(protocolServiceKey -> addressChangeListener.notifyAddressChanged(protocolServiceKey.toString(), new ArrayList<>()));
 
         protocolServiceUrls
-                .forEach((protocolServiceKey, urls) -> addressChangeListener.notifyAddressChanged(protocolServiceKey.toString(), extractUrls(urls)));
+                .forEach((protocolServiceKey, urls) ->{
+                    try {
+                        addressChangeListener.notifyAddressChanged(protocolServiceKey.toString(), extractUrls(urls));
+                    }catch(Exception e ){
+                        log.warn("notifyAddressChanged failed:{}", protocolServiceKey, e);
+                    }
+                });
 
         oldServiceUrls = protocolServiceUrls;
     }

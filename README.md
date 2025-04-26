@@ -24,7 +24,7 @@ Choose either method based on your environment, where Helm is the recommended in
 1. Download code: `git clone https://github.com/apache/dubbo-admin.git`
 2. Change `dubbo-admin-server/src/main/resources/application.properties` configuration to make Admin points to the designated registries, etc.
 3. Build
-    - `mvn clean package -Dmaven.test.skip=true`
+    - `mvn clean package -Dmaven.test.skip=true -P ui`
 4. Start
     * `mvn --projects dubbo-admin-server spring-boot:run`
       or

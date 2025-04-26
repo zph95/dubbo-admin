@@ -29,6 +29,7 @@ export default {
   serviceMock: 'Service Mock',
   serviceMetrics: 'Service Metrics',
   serviceRelation: 'Service Relation',
+  serviceRelationV2: 'Service Relation V2',
   metrics: 'Metrics',
   relation: 'Relation',
   group: 'Group',
