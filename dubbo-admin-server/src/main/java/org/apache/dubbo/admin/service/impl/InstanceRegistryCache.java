@@ -17,6 +17,7 @@
 
 package org.apache.dubbo.admin.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.admin.common.util.Constants;
 import org.apache.dubbo.admin.service.RegistryCache;
 import org.apache.dubbo.common.URL;
@@ -43,12 +44,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.apache.dubbo.admin.common.util.Constants.PROVIDERS_CATEGORY;
 import static org.apache.dubbo.common.constants.CommonConstants.REMOTE_METADATA_STORAGE_TYPE;
 
 /**
  * instance registry url {@link InstanceAddressURL} cache
  * key --> category,value --> ConcurrentMap<appName, Map<serviceKey, List<InstanceAddressURL>>>
  */
+@Slf4j
 @Component
 public class InstanceRegistryCache implements RegistryCache<String, ConcurrentMap<String, Map<String, List<InstanceAddressURL>>>> {
 
